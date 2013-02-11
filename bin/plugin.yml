@@ -1,0 +1,9 @@
+name: DropChest
+main: com.gmail.zimmerlint.plugins.DropChest.DropChest
+version: 1.0
+commands:
+   collectChest:
+      description: Collecting Chests
+      usage: /<command>
+      permission: <plugin name>.basic
+      permission-message: You don't have <permission>
