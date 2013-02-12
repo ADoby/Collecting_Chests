@@ -1,14 +1,14 @@
-package com.gmail.zimmerlint.plugins.DropChest;
+package com.gmail.zimmerlint.plugin;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 
-public class PlateToListen {
+public class Plate_Connection {
 
 	private Block plate = null;
 	private Chest chest = null;
 	
-	public PlateToListen(Block plate, Chest chest){
+	public Plate_Connection(Block plate, Chest chest){
 		this.plate = plate;
 		this.chest = chest;
 	}
