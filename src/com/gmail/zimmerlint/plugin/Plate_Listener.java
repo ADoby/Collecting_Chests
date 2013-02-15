@@ -26,10 +26,6 @@ public class Plate_Listener implements Listener{
 		owner = plugin;
 	}
 
-	public int getPlateCount(){
-		return plate_connections.size();
-	}
-	
 	@EventHandler
 	public void OnBreakBlock(BlockBreakEvent event){
 		// TODO delete Connections etc.
