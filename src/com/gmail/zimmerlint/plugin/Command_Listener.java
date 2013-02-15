@@ -38,7 +38,11 @@ public class Command_Listener implements Listener, CommandExecutor{
 		Iterator<PlayerListener> ita = runningCommands.iterator();
 		while(ita.hasNext()){
 			PlayerListener cl = ita.next();
-			int returns = cl.OnPlayerInteract(event);
+			int returns = 0;
+			
+			if(cl.getPlayer().equals(event.getPlayer())){
+				returns = cl.OnPlayerInteract(event);;
+			}
 			
 			if(returns == 1){ //0 not finished, 1 finished, 2 error
 				//Finished, end Command
