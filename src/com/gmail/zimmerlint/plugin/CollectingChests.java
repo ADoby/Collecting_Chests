@@ -6,6 +6,7 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CollectingChests extends JavaPlugin{
@@ -14,6 +15,10 @@ public class CollectingChests extends JavaPlugin{
 	String version = "";
 	Command_Listener CL;
 	Plate_Listener PL;
+	
+	ConfigAccessor plateConfig = null;
+	ConfigAccessor chestConfig = null;
+	
 	
 	@Override
     public void onEnable(){
@@ -28,23 +33,76 @@ public class CollectingChests extends JavaPlugin{
 		
 		getCommand("collectChest").setExecutor(CL);
 		
-		getServer().getLogger().info("LOADING CONFIG");
-		Set<String> sList = this.getConfig().getConfigurationSection("plates").getKeys(false);
-		Iterator<String> ita = sList.iterator();
-		getServer().getLogger().info("List size: " + String.valueOf(sList.size()));
-		while(ita.hasNext()){
-			String plateLoc = ita.next();
-			World world = getServer().getWorld(this.getConfig().getString("plates."+plateLoc + ".world"));
-			String plateCoords[] = plateLoc.split("/");
-			Location plateLocation = new Location(world,Double.parseDouble(plateCoords[0]),Double.parseDouble(plateCoords[1]),Double.parseDouble(plateCoords[2]));
-			String chestCoords[] = this.getConfig().getString("plates."+plateLoc + ".chest").split("/");
-			Location chestLocation = new Location(world,Double.parseDouble(chestCoords[0]),Double.parseDouble(chestCoords[1]),Double.parseDouble(chestCoords[2]));
-			PL.addPlateConnection(new Plate_Connection(plateLocation.getBlock(),((Chest)chestLocation.getBlock().getState())));
-		}
-		//PL.addPlateConnection(new Plate_Connection());
-		getServer().getLogger().info("END LOADING CONFIG");
+		log("LOADING CONFIG");
+		loadConfig();
+		log("CONFIG LOADED");
+		log("LOADING PLATES");
+		loadPlates();
+		log("PLATES LOADED");
+		log("LOADING CHESTS");
+		//loadChests();
+		log("CHESTS LOADED");
     }
  
+	private void log(String msg){
+		getServer().getLogger().info("[Collecting Chests] "+msg);
+	}
+	
+	private void loadConfig(){
+		plateConfig = new ConfigAccessor(this,"plates.yml");
+		if(!plateConfig.getConfig().isSet("plates")){
+			log("Theres no plate-config, creating it");
+			plateConfig.saveDefaultConfig();
+		}
+		chestConfig = new ConfigAccessor(this,"chests.yml");
+		if(!chestConfig.getConfig().isSet("chests")){
+			log("Theres no chest-config, creating it");
+			chestConfig.saveDefaultConfig();
+		}
+	}
+	
+	private void loadPlates(){
+		ConfigurationSection CS = plateConfig.getConfig().getConfigurationSection("plates");
+		if(CS != null){
+			Set<String> plateList = CS.getKeys(false);
+			Iterator<String> ita = plateList.iterator();
+			while(ita.hasNext()){
+				String plateLoc = ita.next();
+				World world = getServer().getWorld(plateConfig.getConfig().getString("plates." + plateLoc + ".world"));
+				if(world!=null) {
+					String plateCoords[] = plateLoc.split("/");
+					Location plateLocation = new Location(world,Double.parseDouble(plateCoords[0]),Double.parseDouble(plateCoords[1]),Double.parseDouble(plateCoords[2]));
+					String chestCoords[] = plateConfig.getConfig().getString("plates."+plateLoc + ".chest").split("/");
+					Location chestLocation = new Location(world,Double.parseDouble(chestCoords[0]),Double.parseDouble(chestCoords[1]),Double.parseDouble(chestCoords[2]));
+					PL.addPlateConnection(new Plate_Connection(plateLocation.getBlock(),((Chest)chestLocation.getBlock().getState())));
+				}
+			}
+			log("Plates count: " + String.valueOf(PL.getPlateCount()));
+		}
+		
+	}
+	
+	private void loadChests(){
+		ConfigurationSection CS = chestConfig.getConfig().getConfigurationSection("chests");
+		if(CS != null){
+			Set<String> chestList = CS.getKeys(false);
+			Iterator<String> ita = chestList.iterator();
+			while(ita.hasNext()){
+				String chestLoc = ita.next();
+				World world = getServer().getWorld(plateConfig.getConfig().getString("chests." + chestLoc + ".world"));
+				if(world!=null) {
+					String plateCoords[] = chestLoc.split("/");
+					Location ChestLocation = new Location(world,Double.parseDouble(plateCoords[0]),Double.parseDouble(plateCoords[1]),Double.parseDouble(plateCoords[2]));
+					
+					//String chestCoords[] = plateConfig.getConfig().getString("chests."+chestLoc + ".chest").split("/");
+					//Location chestLocation = new Location(world,Double.parseDouble(chestCoords[0]),Double.parseDouble(chestCoords[1]),Double.parseDouble(chestCoords[2]));
+					//PL.addPlateConnection(new Plate_Connection(plateLocation.getBlock(),((Chest)chestLocation.getBlock().getState())));
+				}
+			}
+			log("Chests count: " + String.valueOf(PL.getPlateCount()));
+		}		
+	}
+	
     @Override
     public void onDisable() {
         // TODO Insert logic to be performed when the plugin is disabled
