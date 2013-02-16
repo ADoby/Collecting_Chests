@@ -1,6 +1,6 @@
 name: Collecting Chests
 main: com.gmail.zimmerlint.plugin.CollectingChests
-version: 0.4
+version: 0.5
 commands:
    collectChest:
       description: Collecting Chests
