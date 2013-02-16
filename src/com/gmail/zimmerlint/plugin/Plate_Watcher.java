@@ -1,5 +1,8 @@
 package com.gmail.zimmerlint.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -9,17 +12,16 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.material.PressurePlate;
-import org.bukkit.plugin.Plugin;
 
 public class Plate_Watcher implements Runnable{
 
-	private Plugin owner;
+	private CollectingChests owner;
 	private Block plate;
 	private World world;
-	private Chest chest = null;
+	private List<Chest> chestList = new ArrayList<Chest>();
 	private Location[] chestLocations;
 	
-	public Plate_Watcher(Plugin plugin, Block plate){
+	public Plate_Watcher(CollectingChests plugin, Block plate){
 		owner = plugin;
 		this.plate = plate;
 		this.world = plate.getWorld();
@@ -31,11 +33,24 @@ public class Plate_Watcher implements Runnable{
 		Bukkit.getServer().getScheduler().runTaskLater(owner, this, 20L);
 	}
 	
-	public Plate_Watcher(Plugin plugin, Block plate, Chest chest){
+	public Plate_Watcher(CollectingChests plugin, Block plate, Chest chest){
 		owner = plugin;
 		this.plate = plate;
 		this.world = plate.getWorld();
-		this.chest = chest;
+		chestList.add(chest);
+		chestLocations = new Location[4];
+		chestLocations[0] = new Location(world,plate.getX()+1,plate.getY(),plate.getZ());
+		chestLocations[1] = new Location(world,plate.getX()-1,plate.getY(),plate.getZ());
+		chestLocations[2] = new Location(world,plate.getX(),plate.getY(),plate.getZ()+1);
+		chestLocations[3] = new Location(world,plate.getX(),plate.getY(),plate.getZ()-1);
+		Bukkit.getServer().getScheduler().runTaskLater(owner, this, 20L);
+	}
+	
+	public Plate_Watcher(CollectingChests plugin, Block plate, List<Chest> chestList){
+		owner = plugin;
+		this.plate = plate;
+		this.world = plate.getWorld();
+		this.chestList = chestList;
 		chestLocations = new Location[4];
 		chestLocations[0] = new Location(world,plate.getX()+1,plate.getY(),plate.getZ());
 		chestLocations[1] = new Location(world,plate.getX()-1,plate.getY(),plate.getZ());
@@ -45,17 +60,19 @@ public class Plate_Watcher implements Runnable{
 	}
 	
 	private void addItemToChest(Item item){
-		if(chest!=null){
-			if(chest.getInventory().firstEmpty() != -1){
-				//Chest NOT Full (1 slot free)
-				
-				//Add Entity(As Item) to Chest
-				chest.getInventory().addItem(item.getItemStack());
-					
-				//Delete Item from World
-				item.remove();
-				return;
-			}
+		if(chestList.size()!=0){
+			for(int i=0;i<chestList.size();i++){
+				if(chestList.get(i).getInventory().firstEmpty() != -1){
+					//Chest NOT Full (1 slot free)
+
+					//Add Entity(As Item) to Chest
+					chestList.get(i).getInventory().addItem(item.getItemStack());
+						
+					//Delete Item from World
+					item.remove();
+					return;
+				}
+			}			
 		}
 		for(int i=0;i<chestLocations.length;i++){
 			if(chestLocations[i].getBlock().getTypeId() == 54){
@@ -98,12 +115,11 @@ public class Plate_Watcher implements Runnable{
 					}
 				}
 			}
-			
 			Bukkit.getServer().getScheduler().runTaskLater(owner, this, 20L);
 		}
 	}
 	
-	public Plugin getOwner(){
+	public CollectingChests getOwner(){
 		return owner;
 	}
 	

@@ -40,7 +40,7 @@ public class CollectingChests extends JavaPlugin{
 		loadPlates();
 		log("PLATES LOADED");
 		log("LOADING CHESTS");
-		//loadChests();
+		loadChests();
 		log("CHESTS LOADED");
     }
  
@@ -49,16 +49,9 @@ public class CollectingChests extends JavaPlugin{
 	}
 	
 	private void loadConfig(){
-		plateConfig = new ConfigAccessor(this,"plates.yml");
-		if(!plateConfig.getConfig().isSet("plates")){
-			log("Theres no plate-config, creating it");
-			plateConfig.saveDefaultConfig();
-		}
+		plateConfig = new ConfigAccessor(this, "plates.yml");
 		chestConfig = new ConfigAccessor(this,"chests.yml");
-		if(!chestConfig.getConfig().isSet("chests")){
-			log("Theres no chest-config, creating it");
-			chestConfig.saveDefaultConfig();
-		}
+
 	}
 	
 	private void loadPlates(){
@@ -74,12 +67,13 @@ public class CollectingChests extends JavaPlugin{
 					Location plateLocation = new Location(world,Double.parseDouble(plateCoords[0]),Double.parseDouble(plateCoords[1]),Double.parseDouble(plateCoords[2]));
 					String chestCoords[] = plateConfig.getConfig().getString("plates."+plateLoc + ".chest").split("/");
 					Location chestLocation = new Location(world,Double.parseDouble(chestCoords[0]),Double.parseDouble(chestCoords[1]),Double.parseDouble(chestCoords[2]));
+					log("PlateID: " + String.valueOf(plateLocation.getBlock().getTypeId()));
+					log("ChestID: " + String.valueOf(chestLocation.getBlock().getTypeId()));
 					PL.addPlateConnection(new Plate_Connection(plateLocation.getBlock(),((Chest)chestLocation.getBlock().getState())));
 				}
 			}
-			log("Plates count: " + String.valueOf(PL.getPlateCount()));
+			log("Connection count: " + String.valueOf(PL.getConnectionCount()));
 		}
-		
 	}
 	
 	private void loadChests(){
@@ -91,15 +85,15 @@ public class CollectingChests extends JavaPlugin{
 				String chestLoc = ita.next();
 				World world = getServer().getWorld(plateConfig.getConfig().getString("chests." + chestLoc + ".world"));
 				if(world!=null) {
-					String plateCoords[] = chestLoc.split("/");
-					Location ChestLocation = new Location(world,Double.parseDouble(plateCoords[0]),Double.parseDouble(plateCoords[1]),Double.parseDouble(plateCoords[2]));
+					//String plateCoords[] = chestLoc.split("/");
+					//Location ChestLocation = new Location(world,Double.parseDouble(plateCoords[0]),Double.parseDouble(plateCoords[1]),Double.parseDouble(plateCoords[2]));
 					
 					//String chestCoords[] = plateConfig.getConfig().getString("chests."+chestLoc + ".chest").split("/");
 					//Location chestLocation = new Location(world,Double.parseDouble(chestCoords[0]),Double.parseDouble(chestCoords[1]),Double.parseDouble(chestCoords[2]));
 					//PL.addPlateConnection(new Plate_Connection(plateLocation.getBlock(),((Chest)chestLocation.getBlock().getState())));
 				}
 			}
-			log("Chests count: " + String.valueOf(PL.getPlateCount()));
+
 		}		
 	}
 	
@@ -107,6 +101,8 @@ public class CollectingChests extends JavaPlugin{
     public void onDisable() {
         // TODO Insert logic to be performed when the plugin is disabled
     	this.saveConfig();
+    	plateConfig.saveConfig();
+    	chestConfig.saveConfig();
     }
     
     public Plate_Listener getPlateListener(){
@@ -116,5 +112,13 @@ public class CollectingChests extends JavaPlugin{
     public String getVersion(){
     	return version;
     }
+
+	public ConfigAccessor getPlateConfig() {
+		return plateConfig;
+	}
+    
+	public ConfigAccessor getChestsConfig() {
+		return chestConfig;
+	}
 
 }

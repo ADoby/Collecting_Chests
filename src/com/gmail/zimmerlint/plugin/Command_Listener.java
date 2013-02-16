@@ -20,6 +20,8 @@ public class Command_Listener implements Listener, CommandExecutor{
 	List<String> primaryCommands = new ArrayList<String>();
 	List<String> secondaryCommands = new ArrayList<String>();
 	
+	
+	
 	List<PlayerListener> runningCommands = new ArrayList<PlayerListener>();
 	
 	public Command_Listener(CollectingChests plugin){
@@ -28,8 +30,11 @@ public class Command_Listener implements Listener, CommandExecutor{
 		primaryCommands.add("area");
 		primaryCommands.add("chest");
 		primaryCommands.add("end");
+		primaryCommands.add("filter");
 		secondaryCommands.add("create");
 		secondaryCommands.add("delete");
+		secondaryCommands.add("add");
+		secondaryCommands.add("remove");
 	}
 	
 	@EventHandler
@@ -110,6 +115,11 @@ public class Command_Listener implements Listener, CommandExecutor{
 		    		sender.sendMessage("§6/collectChest plate delete");
 		    		sender.sendMessage("  §aDeletes the connection between a plate and a chest");
 		    		
+		    		sender.sendMessage("§6/collectChest filter add <ItemID/ItemName>");
+		    		sender.sendMessage("  §aAdds a filter for one Item for a chest");
+		    		sender.sendMessage("§6/collectChest filter remove <ItemID/ItemName>");
+		    		sender.sendMessage("  §aRemoves a filter for one Item for a chest");
+		    		
 		    		sender.sendMessage("§6/collectChest area create");
 		    		sender.sendMessage("  §aCreates and connects an area with a chest");
 		    		sender.sendMessage("§6/collectChest area delete");
@@ -143,13 +153,26 @@ public class Command_Listener implements Listener, CommandExecutor{
 					abortCommands((Player)sender);
 					sender.sendMessage("§eCollecting Chests:");
 					sender.sendMessage("  §cCommands aborted");
-				}
-				if(args[0].equalsIgnoreCase("plate")){
+				}else if(args[0].equalsIgnoreCase("plate")){
 					boolean workingCommand = false;
-					if(args[1].equalsIgnoreCase("create")){
+					if(args[1].equalsIgnoreCase("create") || args[1].equalsIgnoreCase("add")){
 						//He wants to create a plate connection
 						workingCommand = true;
-					}else if(args[1].equalsIgnoreCase("delete")){
+					}else if(args[1].equalsIgnoreCase("delete") || args[1].equalsIgnoreCase("remove")){
+						//He wants to delete a plate connection
+						workingCommand = true;
+					}
+					
+					if(workingCommand){
+						startNewCommand((Player)sender,args[0] + " " + args[1]);
+						return true;
+					}
+				}else if(args[0].equalsIgnoreCase("filter")){
+					boolean workingCommand = false;
+					if(args[1].equalsIgnoreCase("create") || args[1].equalsIgnoreCase("add")){
+						//He wants to create a plate connection
+						workingCommand = true;
+					}else if(args[1].equalsIgnoreCase("delete") || args[1].equalsIgnoreCase("remove")){
 						//He wants to delete a plate connection
 						workingCommand = true;
 					}
@@ -168,15 +191,22 @@ public class Command_Listener implements Listener, CommandExecutor{
 	
 	private void startNewCommand(Player player, String command){
 		abortCommands(player);
-		if(command.equalsIgnoreCase("plate create")){
+		if(command.equalsIgnoreCase("plate create") || command.equalsIgnoreCase("plate add")){
 			player.sendMessage("§eCollecting Chests:");
 			player.sendMessage("  §bNow click or step on a plate §aor click on a chest");
 			runningCommands.add(new PlateCreate_CommandListener(player));
-		}
-		if(command.equalsIgnoreCase("plate delete")){
+		}else if(command.equalsIgnoreCase("plate delete") || command.equalsIgnoreCase("plate remove")){
 			player.sendMessage("§eCollecting Chests:");
 			player.sendMessage("  §aNow click or step on the plate");
 			runningCommands.add(new PlateDelete_CommandListener(player));
+		}else if(command.equalsIgnoreCase("filter create") || command.equalsIgnoreCase("filter add")){
+			player.sendMessage("§eCollecting Chests:");
+			player.sendMessage("  §bNow click on a chest");
+			runningCommands.add(new FilterCreate_CommandListener(player));
+		}else if(command.equalsIgnoreCase("filter delete") || command.equalsIgnoreCase("filter remove")){
+			player.sendMessage("§eCollecting Chests:");
+			player.sendMessage("  §aNow click on a chest");
+			runningCommands.add(new FilterDelete_CommandListener(player));
 		}
 	}
 }
