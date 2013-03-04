@@ -59,35 +59,54 @@ public class Plate_Watcher implements Runnable{
 		Bukkit.getServer().getScheduler().runTaskLater(owner, this, 20L);
 	}
 	
+	private void addItem(Chest chest, Item item){
+		//Add Entity(As Item) to Chest
+		chest.getInventory().addItem(item.getItemStack());
+			
+		//Delete Item from World
+		item.remove();
+	}
+	
 	private void addItemToChest(Item item){
 		if(chestList.size()!=0){
 			for(int i=0;i<chestList.size();i++){
 				if(chestList.get(i).getInventory().firstEmpty() != -1){
 					//Chest NOT Full (1 slot free)
 
-					//Add Entity(As Item) to Chest
-					chestList.get(i).getInventory().addItem(item.getItemStack());
-						
-					//Delete Item from World
-					item.remove();
-					return;
+					if(owner.getChestListener().hasChestAttribute(chestList.get(i))){
+						//Chest has got Filters
+						if(owner.getChestListener().getChestAttributes(chestList.get(i)).wantsItem(item.getItemStack())){
+							//Chest wants Item
+							addItem(chestList.get(i),item);
+							return;
+						}
+					}else{
+						addItem(chestList.get(i),item);
+						return;
+					}
+					
+					
+
 				}
 			}			
 		}
 		for(int i=0;i<chestLocations.length;i++){
 			if(chestLocations[i].getBlock().getTypeId() == 54){
 				//Chest on X+1/X-1/Z+1/Z-1 Location of Plate
-				Chest c = (Chest) chestLocations[i].getBlock().getState();
+				Chest chest = (Chest) chestLocations[i].getBlock().getState();
 				
-				if(c.getInventory().firstEmpty() != -1){
-					//Chest NOT Full (1 slot free)
-					
-					//Add Entity(As Item) to Chest
-					c.getInventory().addItem(item.getItemStack());
-							
-					//Delete Item from World
-					item.remove();
-					return;
+				if(chest.getInventory().firstEmpty() != -1){
+					if(owner.getChestListener().hasChestAttribute(chest)){
+						//Chest has got Filters
+						if(owner.getChestListener().getChestAttributes(chest).wantsItem(item.getItemStack())){
+							//Chest wants Item
+							addItem(chest,item);
+							return;
+						}
+					}else{
+						addItem(chest,item);
+						return;
+					}
 				}
 			}
 		}
@@ -96,7 +115,7 @@ public class Plate_Watcher implements Runnable{
 	
 	@Override
 	public void run() {
-		if(((PressurePlate)plate.getState().getData()).isPressed()){
+		if(plate.getTypeId() == 72 && ((PressurePlate)plate.getState().getData()).isPressed()){
 			//As long as plate is pressed, try to get new Items above it
 			
 			Chunk c = plate.getChunk();

@@ -12,7 +12,8 @@ public class PlateDelete_CommandListener extends PlayerListener {
 		super(player);
 	}
 	
-	public int OnPlayerInteract(PlayerInteractEvent event){
+	@Override
+	public int onPlayerInteract(PlayerInteractEvent event){
 		if(event.getClickedBlock().getTypeId() == 72 && event.getPlayer() == player) {
 			plate = event.getClickedBlock();
 			event.setCancelled(true);

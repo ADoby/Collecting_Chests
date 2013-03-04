@@ -1,9 +1,10 @@
 package com.gmail.zimmerlint.plugin;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class PlayerListener {
+public abstract class PlayerListener {
 	
 	Player player;
 	
@@ -11,9 +12,8 @@ public class PlayerListener {
 		this.player = player;
 	}
 	
-	public int OnPlayerInteract(PlayerInteractEvent event){
-		return 0;
-	}
+	@EventHandler
+	abstract public int onPlayerInteract(PlayerInteractEvent event);
 	
 	public Player getPlayer() {
 		return player;

@@ -22,7 +22,8 @@ public class PlateCreate_CommandListener extends PlayerListener{
 		return chest;
 	}
 
-	public int OnPlayerInteract(PlayerInteractEvent event){
+	@Override
+	public int onPlayerInteract(PlayerInteractEvent event){
 		if(plate==null && event.getClickedBlock().getTypeId() == 72 && event.getPlayer() == player) {
 			plate = event.getClickedBlock();
 			//Block should not be destroyed
