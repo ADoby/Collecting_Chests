@@ -141,6 +141,9 @@ public class Command_Listener implements Listener, CommandExecutor{
 	}
 	
 	private void sendHelpToSender(CommandSender sender){
+		
+
+		
 		sender.sendMessage("§aCollecting Chests v" + owner.getVersion() + " help");
     	sender.sendMessage("§e/collectChests <primary> <secondary> <arg>");
     	sender.sendMessage("§6/collectChest plate create");

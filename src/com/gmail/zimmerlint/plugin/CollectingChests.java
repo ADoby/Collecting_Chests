@@ -23,6 +23,8 @@ public class CollectingChests extends JavaPlugin{
 	ConfigAccessor chestConfig = null;
 	ConfigAccessor filterConfig = null;
 	
+	public static boolean useAdvancedAfk = false;
+	
 	@Override
     public void onEnable(){
         // TODO Insert logic to be performed when the plugin is enabled
@@ -50,6 +52,7 @@ public class CollectingChests extends JavaPlugin{
 		log("LOADING FILTERS");
 		loadFilters();
 		log("FILTERS LOADED");
+		
     }
  
 	private void log(String msg){
