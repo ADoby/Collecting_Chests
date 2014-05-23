@@ -1,4 +1,4 @@
-package com.gmail.zimmerlint.plugin;
+package collectingchests;
 
 import java.util.List;
 

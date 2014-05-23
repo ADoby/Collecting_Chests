@@ -1,4 +1,4 @@
-package com.gmail.zimmerlint.plugin;
+package collectingchests;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
