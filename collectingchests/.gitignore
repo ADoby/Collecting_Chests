@@ -1,0 +1,15 @@
+/Chest_Attributes.class
+/Chest_Listener.class
+/CollectingChests.class
+/Command_Listener.class
+/ConfigAccessor.class
+/FilterCreate_CommandListener.class
+/FilterDelete_CommandListener.class
+/Filter_Attributes.class
+/ItemFilter.class
+/PlateCreate_CommandListener.class
+/PlateDelete_CommandListener.class
+/Plate_Connection.class
+/Plate_Listener.class
+/Plate_Watcher.class
+/PlayerListener.class
