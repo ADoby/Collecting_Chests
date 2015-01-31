@@ -171,7 +171,6 @@ public class Command_Listener implements Listener, CommandExecutor{
     	sender.sendMessage("  §aStops current command");
 	}
 	
-	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(cmd.getName().equalsIgnoreCase("collectChest") || cmd.getName().equalsIgnoreCase("cc")){
 			if (args.length > 3) {

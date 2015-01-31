@@ -113,7 +113,6 @@ public class Plate_Watcher implements Runnable{
 	}
 	
 	
-	@Override
 	public void run() {
 		if(plate.getTypeId() == 72 && ((PressurePlate)plate.getState().getData()).isPressed()){
 			//As long as plate is pressed, try to get new Items above it
